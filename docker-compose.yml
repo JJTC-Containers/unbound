@@ -2,7 +2,7 @@ version: '3.5'
 services:
 
     unbound:
-      image: jjtc/unbound:1.8.1-r1
+      image: jjtc/unbound:1.8.1-r0
       build: app/
       restart: unless-stopped
       environment:
