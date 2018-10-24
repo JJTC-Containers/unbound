@@ -1,0 +1,32 @@
+version: 2
+jobs:
+  build:
+    filters:
+      branches:
+        only:
+          - master
+      tags:
+        only: /^\d+\.\d+\.\d+\-r\d+$/
+    docker:
+      - image: docker:17.05.0-ce-git
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Build Docker image
+          command: |
+            docker build -t app ./app
+      - deploy:
+          name: Push image to Docker Hub
+          command: |
+            CIRCLE_TAG="$(git tag -l --points-at HEAD)"
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            docker tag app "$DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG"
+            docker push "$DOCKER_ORG/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG"
+
+workflows:
+  version: 2
+  workflow:
+    jobs:
+    - build

@@ -1,0 +1,17 @@
+version: '3.5'
+services:
+
+    unbound:
+      image: jjtc/unbound:1.8.1-r1
+      build: app/
+      restart: unless-stopped
+      environment:
+        - TZ="Europe/Copenhagen"
+      volumes:
+        - ./unbound.conf:/etc/unbound/unbound.conf:ro
+      tty: true
+      ports:
+        - "53:53/udp"
+      network_mode: host
+      #networks:
+      #  default:
